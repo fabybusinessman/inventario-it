@@ -7,6 +7,7 @@ function App() {
 
   const initialFormState = {
     nombre: '',
+    seccion: '',
     area: '',
     tiendaOficina: '',
     cargo: '',
@@ -32,6 +33,7 @@ function App() {
 
   const fieldLabels = {
     nombre: 'Nombre',
+    seccion: 'Sección',
     area: 'Área',
     tiendaOficina: 'Tienda / Oficina',
     cargo: 'Cargo',
@@ -60,8 +62,26 @@ function App() {
     "Lenovo", "LG", "Microsoft", "MSI", "Razer", "Samsung", "Sony", "Toshiba"
   ];
 
+  const tiendas = [
+    "Antofagasta", "Cantagallo", "Chillán", "Concepcion", "Curicó", "Huerfanos",
+    "La Serena", "Las Condes 2", "Mall Arauco Maipu 2", "Mall Cenco Costanera",
+    "Mall El Trebol (Talcahuano)", "Mall Florida Center", "Mall Open Kennedy",
+    "Mall Plaza Egaña", "Mall Plaza Norte 2", "Mall Plaza Oeste", "Mall Plaza Vespucio",
+    "Mall Puerto Montt", "Manuel Montt", "Osorno", "San Carlos De Apoquindo",
+    "Talca", "Temuco 2", "Viña Del Mar", "Vitacura"
+  ];
+
+  const areas = [
+    "Gerencia Comercial", "Gerencia de Compras", "Gerencia de Personas y Sustentabilidad",
+    "Gerencia General", "Gerencia de Marketing y SAC", "Gerencia TI",
+    "Gerencia Operaciones Tienda", "Gerencia Supply Chain", "Gerencia Ventas Empresas",
+    "Gerencia de Canales", "Gerencia de Negocios", "Gerencia de Logística",
+    "Gerencia de Administracion Y Finanzas"
+  ];
+
   const [form, setForm] = useState(initialFormState);
   const [busqueda, setBusqueda] = useState("");
+  const [filtroTienda, setFiltroTienda] = useState("");
   const [guardando, setGuardando] = useState(false);
   const [view, setView] = useState('dashboard');
 
@@ -103,9 +123,10 @@ function App() {
   };
 
   const filtrados = inventario.filter(item =>
-    Object.values(item).some(value =>
+    (filtroTienda === "" || item.tiendaOficina === filtroTienda) &&
+    (Object.values(item).some(value =>
       String(value).toLowerCase().includes(busqueda.toLowerCase())
-    )
+    ))
   );
 
   return (
@@ -131,8 +152,20 @@ function App() {
             <h2 className="text-xl font-bold mb-4 text-blue-900 border-b pb-2">Registrar Equipo</h2>
             <div className="space-y-4">
               <div className="relative"><span className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none"><svg className="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" /></svg></span><input placeholder="Nombre" value={form.nombre} onChange={e => setForm({...form, nombre: e.target.value})} className="w-full p-2 pl-10 bg-gray-50 border rounded-lg" /></div>
-              <div className="relative"><span className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none"><svg className="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M10 2a2 2 0 00-2 2v1H6a2 2 0 00-2 2v7a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2V4a2 2 0 00-2-2zm-2 4V4h4v2h-4z" clipRule="evenodd" /></svg></span><input placeholder="Área" value={form.area} onChange={e => setForm({...form, area: e.target.value})} className="w-full p-2 pl-10 bg-gray-50 border rounded-lg" /></div>
-              <div className="relative"><span className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none"><svg className="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path d="M3 1a1 1 0 000 2h1.22l.305 1.222a.997.997 0 00.01.042l1.358 5.43-.893.892C3.74 11.846 4.632 14 6.414 14H15a1 1 0 000-2H6.414l1-1H14a1 1 0 00.894-.553l3-6A1 1 0 0017 3H6.28l-.31-1.243A1 1 0 005 1H3zM16 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM6.5 18a1.5 1.5 0 100-3 1.5 1.5 0 000 3z" /></svg></span><input placeholder="Tienda / Oficina" value={form.tiendaOficina} onChange={e => setForm({...form, tiendaOficina: e.target.value})} className="w-full p-2 pl-10 bg-gray-50 border rounded-lg" /></div>
+              <div className="relative"><span className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none"><svg className="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M4 4a2 2 0 012-2h8a2 2 0 012 2v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z" clipRule="evenodd" /></svg></span>
+                <select value={form.seccion} onChange={e => setForm({...form, seccion: e.target.value})} className="w-full p-2 pl-10 bg-gray-50 border rounded-lg appearance-none">
+                  <option value="">Seleccione Sección</option>
+                  <option value="Bicentenario">Bicentenario</option>
+                  <option value="Bodenor">Bodenor</option>
+                  <option value="Tiendas">Tiendas</option>
+                </select>
+                <span className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none"><svg className="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" /></svg></span>
+              </div>
+              <div className="relative"><span className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none"><svg className="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M10 2a2 2 0 00-2 2v1H6a2 2 0 00-2 2v7a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2V4a2 2 0 00-2-2zm-2 4V4h4v2h-4z" clipRule="evenodd" /></svg></span><input list="areas" placeholder="Área" value={form.area} onChange={e => setForm({...form, area: e.target.value})} className="w-full p-2 pl-10 bg-gray-50 border rounded-lg" /><datalist id="areas">{areas.map(a => <option key={a} value={a} />)}</datalist></div>
+              <div className="relative"><span className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none"><svg className="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path d="M3 1a1 1 0 000 2h1.22l.305 1.222a.997.997 0 00.01.042l1.358 5.43-.893.892C3.74 11.846 4.632 14 6.414 14H15a1 1 0 000-2H6.414l1-1H14a1 1 0 00.894-.553l3-6A1 1 0 0017 3H6.28l-.31-1.243A1 1 0 005 1H3zM16 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM6.5 18a1.5 1.5 0 100-3 1.5 1.5 0 000 3z" /></svg></span>
+                <input list={form.seccion === 'Tiendas' ? "tiendas" : ""} placeholder="Tienda / Oficina" value={form.tiendaOficina} onChange={e => setForm({...form, tiendaOficina: e.target.value})} className="w-full p-2 pl-10 bg-gray-50 border rounded-lg" />
+                {form.seccion === 'Tiendas' && <datalist id="tiendas">{tiendas.map(t => <option key={t} value={t} />)}</datalist>}
+              </div>
               <div className="relative"><span className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none"><svg className="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M10 2a1 1 0 00-1 1v1a1 1 0 002 0V3a1 1 0 00-1-1zM4 4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2H4zm10 10a1 1 0 100-2 1 1 0 000 2z" clipRule="evenodd" /></svg></span><input placeholder="Cargo" value={form.cargo} onChange={e => setForm({...form, cargo: e.target.value})} className="w-full p-2 pl-10 bg-gray-50 border rounded-lg" /></div>
               <div className="relative"><span className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none"><svg className="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" /><path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" /></svg></span><input placeholder="Correo" type="email" value={form.correo} onChange={e => setForm({...form, correo: e.target.value})} className="w-full p-2 pl-10 bg-gray-50 border rounded-lg" /></div>
               <div className="relative">
@@ -158,7 +191,7 @@ function App() {
                 <datalist id="brands">{laptopBrands.map(brand => <option key={brand} value={brand} />)}</datalist>
               </div>
               <div className="relative"><span className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none"><svg className="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M17.707 9.293a1 1 0 010 1.414l-7 7a1 1 0 01-1.414 0l-7-7A.997.997 0 012 10V5a3 3 0 013-3h5a.997.997 0 01.707.293l7 7zM5 6a1 1 0 100-2 1 1 0 000 2z" clipRule="evenodd" /></svg></span><input placeholder="Modelo" value={form.modelo} onChange={e => setForm({...form, modelo: e.target.value})} className="w-full p-2 pl-10 bg-gray-50 border rounded-lg" /></div>
-              <div className="relative"><span className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none"><svg className="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path d="M6 4.75A.75.75 0 016.75 4h1.5a.75.75 0 01.75.75v1h2v-1a.75.75 0 01.75-.75h1.5a.75.75 0 01.75.75v1h.75a2.25 2.25 0 012.25 2.25v.75h1a.75.75 0 01.75.75v1.5a.75.75 0 01-.75.75h-1v2h1a.75.75 0 01.75.75v1.5a.75.75 0 01-.75.75h-1v.75A2.25 2.25 0 0114.75 16h-.75v1a.75.75 0 01-.75.75h-1.5a.75.75 0 01-.75-.75v-1h-2v1a.75.75 0 01-.75.75h-1.5a.75.75 0 01-.75-.75v-1h-.75A2.25 2.25 0 013 13.75v-.75h-1a.75.75 0 01-.75-.75v-1.5a.75.75 0 01.75-.75h1v-2h-1a.75.75 0 01-.75-.75v-1.5a.75.75 0 01.75-.75h1v-.75A2.25 2.25 0 015.25 6h.75v-1.25ZM6.5 7.5a.75.75 0 00-.75.75v3.5c0 .414.336.75.75.75h3.5a.75.75 0 00.75-.75v-3.5a.75.75 0 00-.75-.75h-3.5Z" /></svg></span><input placeholder="Procesador" value={form.procesador} onChange={e => setForm({...form, procesador: e.target.value})} className="w-full p-2 pl-10 bg-gray-50 border rounded-lg" /></div>
+Gerencia de Canales              <div className="relative"><span className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none"><svg className="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path d="M6 4.75A.75.75 0 016.75 4h1.5a.75.75 0 01.75.75v1h2v-1a.75.75 0 01.75-.75h1.5a.75.75 0 01.75.75v1h.75a2.25 2.25 0 012.25 2.25v.75h1a.75.75 0 01.75.75v1.5a.75.75 0 01-.75.75h-1v2h1a.75.75 0 01.75.75v1.5a.75.75 0 01-.75.75h-1v.75A2.25 2.25 0 0114.75 16h-.75v1a.75.75 0 01-.75.75h-1.5a.75.75 0 01-.75-.75v-1h-2v1a.75.75 0 01-.75.75h-1.5a.75.75 0 01-.75-.75v-1h-.75A2.25 2.25 0 013 13.75v-.75h-1a.75.75 0 01-.75-.75v-1.5a.75.75 0 01.75-.75h1v-2h-1a.75.75 0 01-.75-.75v-1.5a.75.75 0 01.75-.75h1v-.75A2.25 2.25 0 015.25 6h.75v-1.25ZM6.5 7.5a.75.75 0 00-.75.75v3.5c0 .414.336.75.75.75h3.5a.75.75 0 00.75-.75v-3.5a.75.75 0 00-.75-.75h-3.5Z" /></svg></span><input placeholder="Procesador" value={form.procesador} onChange={e => setForm({...form, procesador: e.target.value})} className="w-full p-2 pl-10 bg-gray-50 border rounded-lg" /></div>
               <div className="relative"><span className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none"><svg className="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path d="M2 4a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H3a1 1 0 01-1-1V4zm0 8a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H3a1 1 0 01-1-1v-2z" /></svg></span><input placeholder="Memoria RAM" value={form.memoriaRAM} onChange={e => setForm({...form, memoriaRAM: e.target.value})} className="w-full p-2 pl-10 bg-gray-50 border rounded-lg" /></div>
               <div className="relative"><span className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none"><svg className="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path d="M2 5a2 2 0 012-2h12a2 2 0 012 2v10a2 2 0 01-2 2H4a2 2 0 01-2-2V5zm3.293 1.293a1 1 0 011.414 0l3 3a1 1 0 010 1.414l-3 3a1 1 0 01-1.414-1.414L7.586 10 5.293 7.707a1 1 0 010-1.414zM11 12a1 1 0 100 2h3a1 1 0 100-2h-3z" /></svg></span><input placeholder="Memoria SSD" value={form.memoriaSSD} onChange={e => setForm({...form, memoriaSSD: e.target.value})} className="w-full p-2 pl-10 bg-gray-50 border rounded-lg" /></div>
               <div className="relative"><span className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none"><svg className="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v12a1 1 0 01-1 1H4a1 1 0 01-1-1V4zm2 2v9h10V6H5z" /></svg></span><input placeholder="Sistema Operativo" value={form.sistemaOperativo} onChange={e => setForm({...form, sistemaOperativo: e.target.value})} className="w-full p-2 pl-10 bg-gray-50 border rounded-lg" /></div>
@@ -178,7 +211,15 @@ function App() {
       {view === 'listado' && (
         <main className="max-w-full mx-auto">
           <h2 className="text-2xl font-bold mb-4 text-blue-900">Listado Completo de Inventario</h2>
-          <input type="text" className="w-full p-4 rounded-xl shadow-sm border-none" placeholder="🔍 Buscar en todo el inventario..." onChange={(e) => setBusqueda(e.target.value)} />
+          <div className="flex gap-4 mb-4">
+            <input type="text" className="flex-1 p-4 rounded-xl shadow-sm border-none" placeholder="🔍 Buscar en todo el inventario..." onChange={(e) => setBusqueda(e.target.value)} />
+            <select className="p-4 rounded-xl shadow-sm border-none bg-white" value={filtroTienda} onChange={(e) => setFiltroTienda(e.target.value)}>
+              <option value="">Todas las Tiendas/Oficinas</option>
+              {[...new Set(inventario.map(i => i.tiendaOficina))].filter(Boolean).sort().map(t => (
+                <option key={t} value={t}>{t}</option>
+              ))}
+            </select>
+          </div>
           <div className="mt-4 bg-white rounded-xl shadow-lg overflow-x-auto border border-gray-200">
             <table className="w-full text-left text-sm">
               <thead className="bg-gray-50 border-b text-blue-900 text-xs font-bold uppercase">
