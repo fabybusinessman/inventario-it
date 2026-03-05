@@ -153,28 +153,27 @@ function App() {
             <div className="space-y-4">
               <div className="relative"><span className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none"><svg className="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" /></svg></span><input placeholder="Nombre" value={form.nombre} onChange={e => setForm({...form, nombre: e.target.value})} className="w-full p-2 pl-10 bg-gray-50 border rounded-lg" /></div>
               <div className="grid grid-cols-2 gap-4">
-                <div className="relative"><span className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none"><svg className="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M4 4a2 2 0 012-2h8a2 2 0 012 2v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z" clipRule="evenodd" /></svg></span>
-                  <select value={form.seccion} onChange={e => setForm({...form, seccion: e.target.value})} className="w-full p-2 pl-10 bg-gray-50 border rounded-lg appearance-none">
-                    <option value="">Seleccione Sección</option>
+                <div className={`relative ${form.seccion !== 'Tiendas' ? 'col-span-2' : ''}`}><span className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none"><svg className="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M4 4a2 2 0 012-2h8a2 2 0 012 2v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z" clipRule="evenodd" /></svg></span>
+                  <select value={form.seccion} onChange={e => {
+                    const val = e.target.value;
+                    setForm({ ...form, seccion: val, tiendaOficina: val === 'Tiendas' ? '' : val });
+                  }} className="w-full p-2 pl-10 bg-gray-50 border rounded-lg appearance-none">
+                    <option value="">Ubicación</option>
                     <option value="Bicentenario">Bicentenario</option>
                     <option value="Bodenor">Bodenor</option>
                     <option value="Tiendas">Tiendas</option>
                   </select>
                   <span className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none"><svg className="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" /></svg></span>
                 </div>
-                <div className="relative"><span className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none"><svg className="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path d="M3 1a1 1 0 000 2h1.22l.305 1.222a.997.997 0 00.01.042l1.358 5.43-.893.892C3.74 11.846 4.632 14 6.414 14H15a1 1 0 000-2H6.414l1-1H14a1 1 0 00.894-.553l3-6A1 1 0 0017 3H6.28l-.31-1.243A1 1 0 005 1H3zM16 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM6.5 18a1.5 1.5 0 100-3 1.5 1.5 0 000 3z" /></svg></span>
-                  {form.seccion === 'Tiendas' ? (
-                    <div className="relative">
+                {form.seccion === 'Tiendas' && (
+                  <div className="relative"><span className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none"><svg className="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path d="M3 1a1 1 0 000 2h1.22l.305 1.222a.997.997 0 00.01.042l1.358 5.43-.893.892C3.74 11.846 4.632 14 6.414 14H15a1 1 0 000-2H6.414l1-1H14a1 1 0 00.894-.553l3-6A1 1 0 0017 3H6.28l-.31-1.243A1 1 0 005 1H3zM16 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM6.5 18a1.5 1.5 0 100-3 1.5 1.5 0 000 3z" /></svg></span>
                       <select value={form.tiendaOficina} onChange={e => setForm({...form, tiendaOficina: e.target.value})} className="w-full p-2 pl-10 bg-gray-50 border rounded-lg appearance-none">
                         <option value="">Seleccione Tienda</option>
                         {tiendas.map(t => <option key={t} value={t}>{t}</option>)}
                       </select>
                       <span className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none"><svg className="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" /></svg></span>
-                    </div>
-                  ) : (
-                    <input placeholder="Tienda / Oficina" value={form.tiendaOficina} onChange={e => setForm({...form, tiendaOficina: e.target.value})} className="w-full p-2 pl-10 bg-gray-50 border rounded-lg" />
-                  )}
-                </div>
+                  </div>
+                )}
               </div>
               <div className="relative"><span className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none"><svg className="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M10 2a2 2 0 00-2 2v1H6a2 2 0 00-2 2v7a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2V4a2 2 0 00-2-2zm-2 4V4h4v2h-4z" clipRule="evenodd" /></svg></span><input list="areas" placeholder="Área" value={form.area} onChange={e => setForm({...form, area: e.target.value})} className="w-full p-2 pl-10 bg-gray-50 border rounded-lg" /><datalist id="areas">{areas.map(a => <option key={a} value={a} />)}</datalist></div>
               <div className="relative"><span className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none"><svg className="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M10 2a1 1 0 00-1 1v1a1 1 0 002 0V3a1 1 0 00-1-1zM4 4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2H4zm10 10a1 1 0 100-2 1 1 0 000 2z" clipRule="evenodd" /></svg></span><input placeholder="Cargo" value={form.cargo} onChange={e => setForm({...form, cargo: e.target.value})} className="w-full p-2 pl-10 bg-gray-50 border rounded-lg" /></div>
