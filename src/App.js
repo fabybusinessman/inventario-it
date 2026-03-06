@@ -17,7 +17,8 @@ function App() {
     nombreUsuario: '',
     hostName: '',
     macAddress: '',
-    estadoAV: 'Activo',
+    status: 'En Bodega', // Estado del activo (En Uso, Bodega, etc.)
+    estadoAV: 'Actualizado', // Estado del Antivirus
     marca: '',
     modelo: '',
     procesador: '',
@@ -28,7 +29,8 @@ function App() {
     caracteristicas: '',
     accesorios: '',
     observaciones: '',
-    color: ''
+    color: '',
+    historial: [] // Array para guardar el timeline
   };
 
   const fieldLabels = {
@@ -43,7 +45,8 @@ function App() {
     nombreUsuario: 'Nombre de usuario',
     hostName: 'Host Name',
     macAddress: 'Mac Address',
-    estadoAV: 'Estado AV',
+    status: 'Estado Activo',
+    estadoAV: 'Estado Antivirus',
     marca: 'Marca',
     modelo: 'Modelo',
     procesador: 'Procesador',
@@ -260,30 +263,37 @@ function App() {
             <table className="w-full text-left text-sm">
               <thead className="bg-gray-50 border-b text-blue-900 text-xs font-bold uppercase">
                 <tr>
-                  {Object.keys(initialFormState).map(key => (
-                    <th key={key} className="p-3 whitespace-nowrap">{fieldLabels[key] || key}</th>
-                  ))}
                   <th className="p-3 whitespace-nowrap text-center">Acciones</th>
+                  {Object.keys(initialFormState).map(key => (
+                    key !== 'historial' && <th key={key} className="p-3 whitespace-nowrap">{fieldLabels[key] || key}</th>
+                  ))}
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
-                {filtrados.map(item => (
-                  <tr key={item.id} className="hover:bg-blue-50">
-                    {Object.keys(initialFormState).map(key => (
-                      <td key={key} className="p-3 whitespace-nowrap">{item[key] || '-'}</td>
-                    ))}
+                {filtrados.map(item => {
+                  // Alerta visual para AV desactualizado
+                  const rowClass = item.estadoAV === 'Desactualizado' || item.estadoAV === 'Error' ? 'bg-red-50 hover:bg-red-100' : 'hover:bg-blue-50';
+                  
+                  return (
+                  <tr key={item.id} className={rowClass}>
                     <td className="p-3 whitespace-nowrap text-center">
                       <div className="flex justify-center gap-2">
                         <button onClick={() => prepararEdicion(item)} className="text-blue-600 hover:text-blue-800 p-1" title="Modificar">
                           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5"><path strokeLinecap="round" strokeLinejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" /></svg>
+                        </button>
+                        <button onClick={() => generarActa(item)} className="text-green-600 hover:text-green-800 p-1" title="Generar Acta">
+                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6" width="24" height="24"><path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" /></svg>
                         </button>
                         <button onClick={() => eliminarEquipo(item.id)} className="text-red-600 hover:text-red-800 p-1" title="Eliminar">
                           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5"><path strokeLinecap="round" strokeLinejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.108 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" /></svg>
                         </button>
                       </div>
                     </td>
+                    {Object.keys(initialFormState).map(key => (
+                      key !== 'historial' && <td key={key} className="p-3 whitespace-nowrap">{item[key] || '-'}</td>
+                    ))}
                   </tr>
-                ))}
+                )})}
               </tbody>
             </table>
           </div>
