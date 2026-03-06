@@ -12,12 +12,14 @@ function App() {
   const [filtroTiendaListado, setFiltroTiendaListado] = useState("");
 
   const initialFormState = {
+    // DATOS PERSONALES
     nombre: '', seccion: '', area: '', tiendaOficina: '', cargo: '', correo: '',
-    fechaEntrega: '', nombreUsuario: '', status: 'En Bodega', hostName: '',
-    macAddress: '', estadoAV: 'Activo', marca: '', modelo: '', procesador: '',
-    memoriaRAM: '', modeloSSD: '', capacidadSSD: '', sistemaOperativo: '',
-    serie: '', caracteristicas: '', accesorios: '', observaciones: '',
-    color: '', cuentaAdmin: '', historial: []
+    fechaEntrega: '', nombreUsuario: '', cuentaAdmin: '',
+    // DATOS EQUIPO
+    status: 'En Bodega', estadoAV: 'Activo', serie: '', hostName: '', macAddress: '',
+    marca: '', modelo: '', procesador: '', memoriaRAM: '', modeloSSD: '', 
+    capacidadSSD: '', sistemaOperativo: '', color: '', caracteristicas: '', 
+    accesorios: '', observaciones: '', historial: []
   };
 
   const [form, setForm] = useState(initialFormState);
@@ -49,8 +51,6 @@ function App() {
     });
     return () => unsubscribe();
   }, []);
-
-  // --- FUNCIONES DE LÓGICA (DEBEN ESTAR AQUÍ DENTRO) ---
 
   const prepararEdicion = (item) => {
     setForm(item);
@@ -92,14 +92,19 @@ function App() {
     const vent = window.open('', '', 'width=800,height=900');
     vent.document.write(`
       <html>
-        <body style="font-family: sans-serif; padding: 40px;">
+        <body style="font-family: sans-serif; padding: 40px; line-height: 1.6;">
           <h1 style="color: #1e3a8a; text-align: center;">Acta de Entrega IT</h1>
           <p><strong>Fecha:</strong> ${new Date().toLocaleDateString('es-CL')}</p>
           <hr/>
-          <h3>Responsable: ${item.nombre}</h3>
-          <p><strong>Equipo:</strong> ${item.marca} ${item.modelo} (${item.serie})</p>
-          <p><strong>Especificaciones:</strong> ${item.procesador}, ${item.memoriaRAM} RAM, SSD ${item.capacidadSSD}</p>
-          <p><strong>Hostname:</strong> ${item.hostName}</p>
+          <h3>1. Datos del Responsable</h3>
+          <p><strong>Nombre:</strong> ${item.nombre} | <strong>Cargo:</strong> ${item.cargo}</p>
+          <p><strong>Área:</strong> ${item.area} | <strong>Ubicación:</strong> ${item.tiendaOficina}</p>
+          <hr/>
+          <h3>2. Especificaciones del Equipo</h3>
+          <p><strong>Equipo:</strong> ${item.marca} ${item.modelo} | <strong>Serial:</strong> ${item.serie}</p>
+          <p><strong>Procesador:</strong> ${item.procesador} | <strong>RAM:</strong> ${item.memoriaRAM}</p>
+          <p><strong>SSD:</strong> ${item.modeloSSD} (${item.capacidadSSD})</p>
+          <p><strong>Hostname:</strong> ${item.hostName} | <strong>S.O:</strong> ${item.sistemaOperativo}</p>
           <br/><br/><br/>
           <div style="display: flex; justify-content: space-around; text-align: center;">
             <div>________________________<br/>Firma Soporte TI</div>
@@ -120,13 +125,6 @@ function App() {
     return matchBusqueda && matchEstado && matchTienda;
   });
 
-  const InputField = ({ label, value, onChange, type = "text" }) => (
-    <div className="flex flex-col gap-1">
-      <label className="text-[11px] font-bold text-slate-500 uppercase ml-1">{label}</label>
-      <input type={type} value={value} onChange={onChange} className="p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 ring-blue-500 outline-none" />
-    </div>
-  );
-
   return (
     <div className="min-h-screen bg-slate-100 font-sans text-slate-900">
       <header className="bg-blue-900 text-white shadow-xl sticky top-0 z-50">
@@ -144,46 +142,116 @@ function App() {
           <div className="bg-white rounded-3xl shadow-xl p-8 border border-slate-200">
             <h2 className="text-xl font-black mb-8 text-slate-700">{editId ? '📝 MODIFICAR' : '🆕 NUEVO REGISTRO'}</h2>
             <div className="space-y-8">
+              {/* SECCION 1: DATOS PERSONALES */}
               <section className="grid grid-cols-1 md:grid-cols-4 gap-6">
-                <div className="md:col-span-4 border-l-4 border-blue-600 pl-3"><h3 className="text-xs font-black text-blue-600 uppercase">1. Usuario</h3></div>
-                <InputField label="Nombre" value={form.nombre} onChange={e => setForm({...form, nombre: e.target.value})} />
+                <div className="md:col-span-4 border-l-4 border-blue-600 pl-3"><h3 className="text-xs font-black text-blue-600 uppercase">1. Datos Personales</h3></div>
+                
                 <div className="flex flex-col gap-1">
-                  <label className="text-[11px] font-bold text-slate-500 uppercase">Área</label>
-                  <select value={form.area} onChange={e => setForm({...form, area: e.target.value})} className="p-3 bg-slate-50 border rounded-xl">
-                    <option value="">Seleccionar...</option>
+                  <label className="text-[11px] font-bold text-slate-500 uppercase ml-1">Nombre Responsable</label>
+                  <input value={form.nombre} onChange={e => setForm({...form, nombre: e.target.value})} className="p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none" />
+                </div>
+
+                <div className="flex flex-col gap-1">
+                  <label className="text-[11px] font-bold text-slate-500 uppercase ml-1">Gerencia / Área</label>
+                  <select value={form.area} onChange={e => setForm({...form, area: e.target.value})} className="p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none">
+                    <option value="">Seleccionar Gerencia...</option>
                     {areas.map(a => <option key={a} value={a}>{a}</option>)}
                   </select>
                 </div>
+
                 <div className="flex flex-col gap-1">
-                  <label className="text-[11px] font-bold text-slate-500 uppercase">Tienda</label>
-                  <select value={form.tiendaOficina} onChange={e => setForm({...form, tiendaOficina: e.target.value})} className="p-3 bg-slate-50 border rounded-xl">
-                    <option value="">Seleccionar...</option>
-                    {tiendas.map(t => <option key={t} value={t}>{t}</option>)}
+                  <label className="text-[11px] font-bold text-slate-500 uppercase ml-1">Tienda / Oficina</label>
+                  <select value={form.tiendaOficina} onChange={e => setForm({...form, tiendaOficina: e.target.value})} className="p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none">
+                    <option value="">Seleccionar Ubicación...</option>
+                    <option value="Bicentenario">Bicentenario</option>
+                    <option value="Bodenor">Bodenor</option>
+                    <optgroup label="Tiendas">
+                      {tiendas.map(t => <option key={t} value={t}>{t}</option>)}
+                    </optgroup>
                   </select>
                 </div>
-                <InputField label="Cargo" value={form.cargo} onChange={e => setForm({...form, cargo: e.target.value})} />
+
+                <div className="flex flex-col gap-1">
+                    <label className="text-[11px] font-bold text-slate-500 uppercase ml-1">Cargo</label>
+                    <input value={form.cargo} onChange={e => setForm({...form, cargo: e.target.value})} className="p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none" />
+                </div>
+                <div className="flex flex-col gap-1">
+                    <label className="text-[11px] font-bold text-slate-500 uppercase ml-1">Correo</label>
+                    <input value={form.correo} onChange={e => setForm({...form, correo: e.target.value})} className="p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none" />
+                </div>
+                <div className="flex flex-col gap-1">
+                    <label className="text-[11px] font-bold text-slate-500 uppercase ml-1">Fecha Entrega</label>
+                    <input type="date" value={form.fechaEntrega} onChange={e => setForm({...form, fechaEntrega: e.target.value})} className="p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none" />
+                </div>
+                <div className="flex flex-col gap-1">
+                    <label className="text-[11px] font-bold text-slate-500 uppercase ml-1">Usuario Red</label>
+                    <input value={form.nombreUsuario} onChange={e => setForm({...form, nombreUsuario: e.target.value})} className="p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none" />
+                </div>
+                <div className="flex flex-col gap-1">
+                    <label className="text-[11px] font-bold text-slate-500 uppercase ml-1">Cuenta Admin</label>
+                    <input value={form.cuentaAdmin} onChange={e => setForm({...form, cuentaAdmin: e.target.value})} className="p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none" />
+                </div>
               </section>
 
+              {/* SECCION 2: DATOS EQUIPO */}
               <section className="grid grid-cols-1 md:grid-cols-4 gap-6">
-                <div className="md:col-span-4 border-l-4 border-indigo-600 pl-3"><h3 className="text-xs font-black text-indigo-600 uppercase">2. Equipo</h3></div>
-                <InputField label="Serie (S/N)" value={form.serie} onChange={e => setForm({...form, serie: e.target.value})} />
-                <InputField label="Hostname" value={form.hostName} onChange={e => setForm({...form, hostName: e.target.value})} />
-                <InputField label="Modelo SSD" value={form.modeloSSD} onChange={e => setForm({...form, modeloSSD: e.target.value})} />
-                <InputField label="Capacidad SSD" value={form.capacidadSSD} onChange={e => setForm({...form, capacidadSSD: e.target.value})} />
+                <div className="md:col-span-4 border-l-4 border-indigo-600 pl-3"><h3 className="text-xs font-black text-indigo-600 uppercase">2. Datos del Equipo</h3></div>
+                
                 <div className="flex flex-col gap-1">
-                  <label className="text-[11px] font-bold text-slate-500 uppercase">Estado</label>
-                  <select value={form.status} onChange={e => setForm({...form, status: e.target.value})} className="p-3 bg-slate-50 border rounded-xl font-bold">
+                  <label className="text-[11px] font-bold text-slate-500 uppercase ml-1">Serie (S/N)</label>
+                  <input value={form.serie} onChange={e => setForm({...form, serie: e.target.value})} className="p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none" />
+                </div>
+                <div className="flex flex-col gap-1">
+                  <label className="text-[11px] font-bold text-slate-500 uppercase ml-1">Hostname</label>
+                  <input value={form.hostName} onChange={e => setForm({...form, hostName: e.target.value})} className="p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none" />
+                </div>
+                <div className="flex flex-col gap-1">
+                  <label className="text-[11px] font-bold text-slate-500 uppercase ml-1">Marca</label>
+                  <input value={form.marca} onChange={e => setForm({...form, marca: e.target.value})} className="p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none" />
+                </div>
+                <div className="flex flex-col gap-1">
+                  <label className="text-[11px] font-bold text-slate-500 uppercase ml-1">Modelo</label>
+                  <input value={form.modelo} onChange={e => setForm({...form, modelo: e.target.value})} className="p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none" />
+                </div>
+                <div className="flex flex-col gap-1">
+                  <label className="text-[11px] font-bold text-slate-500 uppercase ml-1">Procesador</label>
+                  <input value={form.procesador} onChange={e => setForm({...form, procesador: e.target.value})} className="p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none" />
+                </div>
+                <div className="flex flex-col gap-1">
+                  <label className="text-[11px] font-bold text-slate-500 uppercase ml-1">RAM</label>
+                  <input value={form.memoriaRAM} onChange={e => setForm({...form, memoriaRAM: e.target.value})} className="p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none" />
+                </div>
+                <div className="flex flex-col gap-1">
+                  <label className="text-[11px] font-bold text-slate-500 uppercase ml-1">Modelo SSD</label>
+                  <input value={form.modeloSSD} onChange={e => setForm({...form, modeloSSD: e.target.value})} className="p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none" />
+                </div>
+                <div className="flex flex-col gap-1">
+                  <label className="text-[11px] font-bold text-slate-500 uppercase ml-1">Capacidad SSD</label>
+                  <input value={form.capacidadSSD} onChange={e => setForm({...form, capacidadSSD: e.target.value})} className="p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none" />
+                </div>
+                <div className="flex flex-col gap-1">
+                  <label className="text-[11px] font-bold text-slate-500 uppercase ml-1">Sistema Operativo</label>
+                  <input value={form.sistemaOperativo} onChange={e => setForm({...form, sistemaOperativo: e.target.value})} className="p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none" />
+                </div>
+                <div className="flex flex-col gap-1">
+                  <label className="text-[11px] font-bold text-slate-500 uppercase ml-1">MAC Address</label>
+                  <input value={form.macAddress} onChange={e => setForm({...form, macAddress: e.target.value})} className="p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none" />
+                </div>
+                <div className="flex flex-col gap-1">
+                  <label className="text-[11px] font-bold text-slate-500 uppercase ml-1">Estado Equipo</label>
+                  <select value={form.status} onChange={e => setForm({...form, status: e.target.value})} className="p-3 bg-slate-50 border border-slate-200 rounded-xl font-bold">
                     {assetStatuses.map(s => <option key={s} value={s}>{s}</option>)}
                   </select>
                 </div>
                 <div className="flex flex-col gap-1">
-                  <label className="text-[11px] font-bold text-slate-500 uppercase">Antivirus</label>
-                  <select value={form.estadoAV} onChange={e => setForm({...form, estadoAV: e.target.value})} className="p-3 bg-slate-50 border rounded-xl">
+                  <label className="text-[11px] font-bold text-slate-500 uppercase ml-1">Antivirus</label>
+                  <select value={form.estadoAV} onChange={e => setForm({...form, estadoAV: e.target.value})} className="p-3 bg-slate-50 border border-slate-200 rounded-xl">
                     {avStatuses.map(s => <option key={s} value={s}>{s}</option>)}
                   </select>
                 </div>
               </section>
-              <button onClick={agregarEquipo} disabled={guardando} className="w-full bg-blue-600 text-white font-black py-5 rounded-2xl shadow-xl hover:bg-blue-700 disabled:bg-slate-300 uppercase">
+
+              <button onClick={agregarEquipo} disabled={guardando} className="w-full bg-blue-600 text-white font-black py-5 rounded-2xl shadow-xl hover:bg-blue-700 disabled:bg-slate-300 uppercase tracking-widest transition-all">
                 {guardando ? 'Sincronizando...' : (editId ? 'Guardar Cambios' : 'Registrar Equipo')}
               </button>
             </div>
@@ -192,10 +260,14 @@ function App() {
       ) : (
         <main className="max-w-7xl mx-auto p-6 space-y-6">
           <div className="flex flex-col md:flex-row gap-4">
-            <input className="flex-1 p-4 rounded-2xl shadow-md border-none outline-none" placeholder="🔍 Buscar..." value={busqueda} onChange={e => setBusqueda(e.target.value)} />
+            <input className="flex-1 p-4 rounded-2xl shadow-md border-none outline-none focus:ring-2 ring-blue-500" placeholder="🔍 Buscar por nombre o serie..." value={busqueda} onChange={e => setBusqueda(e.target.value)} />
             <select className="p-4 rounded-2xl bg-white shadow-md border-none font-bold text-xs" value={filtroEstado} onChange={e => setFiltroEstado(e.target.value)}>
-              <option value="">Estado</option>
+              <option value="">Filtro: Estado</option>
               {assetStatuses.map(s => <option key={s} value={s}>{s}</option>)}
+            </select>
+            <select className="p-4 rounded-2xl bg-white shadow-md border-none font-bold text-xs" value={filtroTiendaListado} onChange={e => setFiltroTiendaListado(e.target.value)}>
+              <option value="">Filtro: Tienda/Oficina</option>
+              {tiendas.map(t => <option key={t} value={t}>{t}</option>)}
             </select>
           </div>
 
@@ -228,7 +300,7 @@ function App() {
                       <p className="text-[9px] font-bold text-slate-400 uppercase">AV: {item.estadoAV}</p>
                     </td>
                     <td className="p-4"><p className="font-black text-slate-700 text-xs uppercase">{item.nombre}</p></td>
-                    <td className="p-4"><p className="font-mono text-blue-600 text-xs">{item.serie}</p></td>
+                    <td className="p-4"><p className="font-mono text-blue-600 text-xs font-bold">{item.serie}</p></td>
                   </tr>
                 ))}
               </tbody>
