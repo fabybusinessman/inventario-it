@@ -144,6 +144,35 @@ function App() {
     }
   };
 
+  const generarActa = (item) => {
+    const actaContent = `
+      <html>
+        <head><title>Acta de Entrega</title></head>
+        <body style="font-family: Arial; padding: 40px;">
+          <h1 style="text-align: center;">Acta de Entrega de Equipo</h1>
+          <p><strong>Fecha:</strong> ${new Date().toLocaleDateString('es-CL')}</p>
+          <hr/>
+          <h3>Datos del Usuario</h3>
+          <p><strong>Nombre:</strong> ${item.nombre}</p>
+          <p><strong>Cargo:</strong> ${item.cargo}</p>
+          <p><strong>Área:</strong> ${item.area}</p>
+          <hr/>
+          <h3>Datos del Equipo</h3>
+          <p><strong>Tipo:</strong> Notebook</p>
+          <p><strong>Marca/Modelo:</strong> ${item.marca} ${item.modelo}</p>
+          <p><strong>Serie:</strong> ${item.serie}</p>
+          <p><strong>Hostname:</strong> ${item.hostName}</p>
+          <br/><br/><br/>
+          <p style="text-align: center;">__________________________<br/>Firma Conforme</p>
+        </body>
+      </html>
+    `;
+    const win = window.open('', '', 'width=800,height=600');
+    win.document.write(actaContent);
+    win.document.close();
+    win.print();
+  };
+
   const prepararEdicion = (item) => {
     const { id, ...data } = item;
     setForm(data);
