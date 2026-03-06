@@ -131,8 +131,8 @@ function App() {
         <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
           <div><h1 className="text-2xl font-black">INVENTARIO TI PRO</h1></div>
           <div className="flex bg-blue-800 p-1 rounded-2xl">
-            <button onClick={() => setView('dashboard')} className={`px-6 py-2 rounded-xl text-xs font-black ${view === 'dashboard' ? 'bg-white text-blue-900' : ''}`}>REGISTRO</button>
-            <button onClick={() => setView('listado')} className={`px-6 py-2 rounded-xl text-xs font-black ${view === 'listado' ? 'bg-white text-blue-900' : ''}`}>LISTADO</button>
+            <button onClick={() => setView('dashboard')} className={`px-6 py-2 rounded-xl text-xs font-black ${view === 'dashboard' ? 'bg-white text-blue-900 shadow-lg' : ''}`}>REGISTRO</button>
+            <button onClick={() => setView('listado')} className={`px-6 py-2 rounded-xl text-xs font-black ${view === 'listado' ? 'bg-white text-blue-900 shadow-lg' : ''}`}>LISTADO</button>
           </div>
         </div>
       </header>
@@ -140,9 +140,9 @@ function App() {
       {view === 'dashboard' ? (
         <main className="max-w-6xl mx-auto p-6">
           <div className="bg-white rounded-3xl shadow-xl p-8 border border-slate-200">
-            <h2 className="text-xl font-black mb-8 text-slate-700">{editId ? '📝 MODIFICAR' : '🆕 NUEVO REGISTRO'}</h2>
+            <h2 className="text-xl font-black mb-8 text-slate-700 uppercase">{editId ? '📝 Modificar Activo' : '🆕 Nuevo Registro'}</h2>
             <div className="space-y-8">
-              {/* SECCION 1: DATOS PERSONALES */}
+              {/* SECCIÓN 1: DATOS PERSONALES */}
               <section className="grid grid-cols-1 md:grid-cols-4 gap-6">
                 <div className="md:col-span-4 border-l-4 border-blue-600 pl-3"><h3 className="text-xs font-black text-blue-600 uppercase">1. Datos Personales</h3></div>
                 
@@ -171,72 +171,28 @@ function App() {
                   </select>
                 </div>
 
-                <div className="flex flex-col gap-1">
-                    <label className="text-[11px] font-bold text-slate-500 uppercase ml-1">Cargo</label>
-                    <input value={form.cargo} onChange={e => setForm({...form, cargo: e.target.value})} className="p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none" />
-                </div>
-                <div className="flex flex-col gap-1">
-                    <label className="text-[11px] font-bold text-slate-500 uppercase ml-1">Correo</label>
-                    <input value={form.correo} onChange={e => setForm({...form, correo: e.target.value})} className="p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none" />
-                </div>
-                <div className="flex flex-col gap-1">
-                    <label className="text-[11px] font-bold text-slate-500 uppercase ml-1">Fecha Entrega</label>
-                    <input type="date" value={form.fechaEntrega} onChange={e => setForm({...form, fechaEntrega: e.target.value})} className="p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none" />
-                </div>
-                <div className="flex flex-col gap-1">
-                    <label className="text-[11px] font-bold text-slate-500 uppercase ml-1">Usuario Red</label>
-                    <input value={form.nombreUsuario} onChange={e => setForm({...form, nombreUsuario: e.target.value})} className="p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none" />
-                </div>
-                <div className="flex flex-col gap-1">
-                    <label className="text-[11px] font-bold text-slate-500 uppercase ml-1">Cuenta Admin</label>
-                    <input value={form.cuentaAdmin} onChange={e => setForm({...form, cuentaAdmin: e.target.value})} className="p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none" />
-                </div>
+                <div className="flex flex-col gap-1"><label className="text-[11px] font-bold text-slate-500 uppercase ml-1">Cargo</label><input value={form.cargo} onChange={e => setForm({...form, cargo: e.target.value})} className="p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none" /></div>
+                <div className="flex flex-col gap-1"><label className="text-[11px] font-bold text-slate-500 uppercase ml-1">Correo</label><input value={form.correo} onChange={e => setForm({...form, correo: e.target.value})} className="p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none" /></div>
+                <div className="flex flex-col gap-1"><label className="text-[11px] font-bold text-slate-500 uppercase ml-1">Fecha Entrega</label><input type="date" value={form.fechaEntrega} onChange={e => setForm({...form, fechaEntrega: e.target.value})} className="p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none" /></div>
+                <div className="flex flex-col gap-1"><label className="text-[11px] font-bold text-slate-500 uppercase ml-1">Usuario Red</label><input value={form.nombreUsuario} onChange={e => setForm({...form, nombreUsuario: e.target.value})} className="p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none" /></div>
+                <div className="flex flex-col gap-1"><label className="text-[11px] font-bold text-slate-500 uppercase ml-1">Cuenta Admin</label><input value={form.cuentaAdmin} onChange={e => setForm({...form, cuentaAdmin: e.target.value})} className="p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none" /></div>
               </section>
 
-              {/* SECCION 2: DATOS EQUIPO */}
+              {/* SECCIÓN 2: DATOS EQUIPO */}
               <section className="grid grid-cols-1 md:grid-cols-4 gap-6">
                 <div className="md:col-span-4 border-l-4 border-indigo-600 pl-3"><h3 className="text-xs font-black text-indigo-600 uppercase">2. Datos del Equipo</h3></div>
                 
-                <div className="flex flex-col gap-1">
-                  <label className="text-[11px] font-bold text-slate-500 uppercase ml-1">Serie (S/N)</label>
-                  <input value={form.serie} onChange={e => setForm({...form, serie: e.target.value})} className="p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none" />
-                </div>
-                <div className="flex flex-col gap-1">
-                  <label className="text-[11px] font-bold text-slate-500 uppercase ml-1">Hostname</label>
-                  <input value={form.hostName} onChange={e => setForm({...form, hostName: e.target.value})} className="p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none" />
-                </div>
-                <div className="flex flex-col gap-1">
-                  <label className="text-[11px] font-bold text-slate-500 uppercase ml-1">Marca</label>
-                  <input value={form.marca} onChange={e => setForm({...form, marca: e.target.value})} className="p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none" />
-                </div>
-                <div className="flex flex-col gap-1">
-                  <label className="text-[11px] font-bold text-slate-500 uppercase ml-1">Modelo</label>
-                  <input value={form.modelo} onChange={e => setForm({...form, modelo: e.target.value})} className="p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none" />
-                </div>
-                <div className="flex flex-col gap-1">
-                  <label className="text-[11px] font-bold text-slate-500 uppercase ml-1">Procesador</label>
-                  <input value={form.procesador} onChange={e => setForm({...form, procesador: e.target.value})} className="p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none" />
-                </div>
-                <div className="flex flex-col gap-1">
-                  <label className="text-[11px] font-bold text-slate-500 uppercase ml-1">RAM</label>
-                  <input value={form.memoriaRAM} onChange={e => setForm({...form, memoriaRAM: e.target.value})} className="p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none" />
-                </div>
-                <div className="flex flex-col gap-1">
-                  <label className="text-[11px] font-bold text-slate-500 uppercase ml-1">Modelo SSD</label>
-                  <input value={form.modeloSSD} onChange={e => setForm({...form, modeloSSD: e.target.value})} className="p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none" />
-                </div>
-                <div className="flex flex-col gap-1">
-                  <label className="text-[11px] font-bold text-slate-500 uppercase ml-1">Capacidad SSD</label>
-                  <input value={form.capacidadSSD} onChange={e => setForm({...form, capacidadSSD: e.target.value})} className="p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none" />
-                </div>
-                <div className="flex flex-col gap-1">
-                  <label className="text-[11px] font-bold text-slate-500 uppercase ml-1">Sistema Operativo</label>
-                  <input value={form.sistemaOperativo} onChange={e => setForm({...form, sistemaOperativo: e.target.value})} className="p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none" />
-                </div>
-                <div className="flex flex-col gap-1">
-                  <label className="text-[11px] font-bold text-slate-500 uppercase ml-1">MAC Address</label>
-                  <input value={form.macAddress} onChange={e => setForm({...form, macAddress: e.target.value})} className="p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none" />
-                </div>
+                <div className="flex flex-col gap-1"><label className="text-[11px] font-bold text-slate-500 uppercase ml-1">Serie (S/N)</label><input value={form.serie} onChange={e => setForm({...form, serie: e.target.value})} className="p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none" /></div>
+                <div className="flex flex-col gap-1"><label className="text-[11px] font-bold text-slate-500 uppercase ml-1">Hostname</label><input value={form.hostName} onChange={e => setForm({...form, hostName: e.target.value})} className="p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none" /></div>
+                <div className="flex flex-col gap-1"><label className="text-[11px] font-bold text-slate-500 uppercase ml-1">Marca</label><input value={form.marca} onChange={e => setForm({...form, marca: e.target.value})} className="p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none" /></div>
+                <div className="flex flex-col gap-1"><label className="text-[11px] font-bold text-slate-500 uppercase ml-1">Modelo</label><input value={form.modelo} onChange={e => setForm({...form, modelo: e.target.value})} className="p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none" /></div>
+                <div className="flex flex-col gap-1"><label className="text-[11px] font-bold text-slate-500 uppercase ml-1">Procesador</label><input value={form.procesador} onChange={e => setForm({...form, procesador: e.target.value})} className="p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none" /></div>
+                <div className="flex flex-col gap-1"><label className="text-[11px] font-bold text-slate-500 uppercase ml-1">RAM</label><input value={form.memoriaRAM} onChange={e => setForm({...form, memoriaRAM: e.target.value})} className="p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none" /></div>
+                <div className="flex flex-col gap-1"><label className="text-[11px] font-bold text-slate-500 uppercase ml-1">Modelo SSD</label><input value={form.modeloSSD} onChange={e => setForm({...form, modeloSSD: e.target.value})} className="p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none" /></div>
+                <div className="flex flex-col gap-1"><label className="text-[11px] font-bold text-slate-500 uppercase ml-1">Capacidad SSD</label><input value={form.capacidadSSD} onChange={e => setForm({...form, capacidadSSD: e.target.value})} className="p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none" /></div>
+                <div className="flex flex-col gap-1"><label className="text-[11px] font-bold text-slate-500 uppercase ml-1">Sistema Operativo</label><input value={form.sistemaOperativo} onChange={e => setForm({...form, sistemaOperativo: e.target.value})} className="p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none" /></div>
+                <div className="flex flex-col gap-1"><label className="text-[11px] font-bold text-slate-500 uppercase ml-1">MAC Address</label><input value={form.macAddress} onChange={e => setForm({...form, macAddress: e.target.value})} className="p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none" /></div>
+                
                 <div className="flex flex-col gap-1">
                   <label className="text-[11px] font-bold text-slate-500 uppercase ml-1">Estado Equipo</label>
                   <select value={form.status} onChange={e => setForm({...form, status: e.target.value})} className="p-3 bg-slate-50 border border-slate-200 rounded-xl font-bold">
@@ -259,6 +215,16 @@ function App() {
         </main>
       ) : (
         <main className="max-w-7xl mx-auto p-6 space-y-6">
+          {/* DASHBOARD DE ESTADOS */}
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+            {["En Uso", "En Bodega", "De Baja", "En Reparación", "Total"].map(label => (
+              <div key={label} className="bg-white p-4 rounded-2xl shadow-sm border border-slate-200 text-center">
+                <p className="text-[10px] font-black text-slate-400 uppercase">{label}</p>
+                <p className="text-2xl font-black text-blue-900">{label === "Total" ? inventario.length : inventario.filter(i => i.status === label).length}</p>
+              </div>
+            ))}
+          </div>
+
           <div className="flex flex-col md:flex-row gap-4">
             <input className="flex-1 p-4 rounded-2xl shadow-md border-none outline-none focus:ring-2 ring-blue-500" placeholder="🔍 Buscar por nombre o serie..." value={busqueda} onChange={e => setBusqueda(e.target.value)} />
             <select className="p-4 rounded-2xl bg-white shadow-md border-none font-bold text-xs" value={filtroEstado} onChange={e => setFiltroEstado(e.target.value)}>
@@ -266,8 +232,10 @@ function App() {
               {assetStatuses.map(s => <option key={s} value={s}>{s}</option>)}
             </select>
             <select className="p-4 rounded-2xl bg-white shadow-md border-none font-bold text-xs" value={filtroTiendaListado} onChange={e => setFiltroTiendaListado(e.target.value)}>
-              <option value="">Filtro: Tienda/Oficina</option>
-              {tiendas.map(t => <option key={t} value={t}>{t}</option>)}
+              <option value="">Filtro: Ubicación</option>
+              <option value="Bicentenario">Bicentenario</option>
+              <option value="Bodenor">Bodenor</option>
+              <optgroup label="Tiendas">{tiendas.map(t => <option key={t} value={t}>{t}</option>)}</optgroup>
             </select>
           </div>
 
@@ -277,21 +245,22 @@ function App() {
                 <tr className="bg-slate-800 text-white font-black text-[10px] uppercase">
                   <th className="p-4">Acciones</th>
                   <th className="p-4">Estado / AV</th>
-                  <th className="p-4">Usuario</th>
+                  <th className="p-4">Usuario / Área</th>
                   <th className="p-4">S/N - Modelo</th>
+                  <th className="p-4">Ubicación</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
                 {filtrados.map(item => (
                   <tr key={item.id} className="hover:bg-blue-50 transition-colors">
                     <td className="p-4 flex gap-2">
-                      <button onClick={() => prepararEdicion(item)} className="p-2 bg-blue-50 text-blue-600 rounded-lg">
+                      <button onClick={() => prepararEdicion(item)} className="p-2 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-600 hover:text-white transition">
                         <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>
                       </button>
-                      <button onClick={() => generarActa(item)} className="p-2 bg-green-50 text-green-600 rounded-lg">
+                      <button onClick={() => generarActa(item)} className="p-2 bg-green-50 text-green-600 rounded-lg hover:bg-green-600 hover:text-white transition">
                         <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 00-2 2h2m2 4h10a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" /></svg>
                       </button>
-                      <button onClick={async () => { if(window.confirm("¿Eliminar?")) await deleteDoc(doc(db, "inventario", item.id)) }} className="p-2 bg-red-50 text-red-600 rounded-lg">
+                      <button onClick={async () => { if(window.confirm("¿Eliminar?")) await deleteDoc(doc(db, "inventario", item.id)) }} className="p-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-600 hover:text-white transition">
                         <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
                       </button>
                     </td>
@@ -299,8 +268,9 @@ function App() {
                       <p className={`text-[9px] font-black uppercase ${item.status === 'En Uso' ? 'text-blue-600' : 'text-green-600'}`}>{item.status}</p>
                       <p className="text-[9px] font-bold text-slate-400 uppercase">AV: {item.estadoAV}</p>
                     </td>
-                    <td className="p-4"><p className="font-black text-slate-700 text-xs uppercase">{item.nombre}</p></td>
-                    <td className="p-4"><p className="font-mono text-blue-600 text-xs font-bold">{item.serie}</p></td>
+                    <td className="p-4"><p className="font-black text-slate-700 text-xs uppercase">{item.nombre}</p><p className="text-[10px] text-slate-400 font-bold uppercase">{item.area}</p></td>
+                    <td className="p-4"><p className="font-mono text-blue-600 text-xs font-bold">{item.serie}</p><p className="text-[10px] text-slate-500 font-bold uppercase">{item.marca} {item.modelo}</p></td>
+                    <td className="p-4 text-[10px] font-black text-slate-400 uppercase">{item.tiendaOficina}</td>
                   </tr>
                 ))}
               </tbody>
