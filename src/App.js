@@ -17,8 +17,8 @@ function App() {
     nombreUsuario: '',
     hostName: '',
     macAddress: '',
-    status: 'En Bodega', // Estado del activo (En Uso, Bodega, etc.)
-    estadoAV: 'Actualizado', // Estado del Antivirus
+    status: 'En Bodega',
+    estadoAV: 'Actualizado',
     marca: '',
     modelo: '',
     procesador: '',
@@ -30,7 +30,7 @@ function App() {
     accesorios: '',
     observaciones: '',
     color: '',
-    historial: [] // Array para guardar el timeline
+    historial: []
   };
 
   const fieldLabels = {
@@ -45,8 +45,8 @@ function App() {
     nombreUsuario: 'Nombre de usuario',
     hostName: 'Host Name',
     macAddress: 'Mac Address',
-    status: 'Estado Activo',
-    estadoAV: 'Estado Antivirus',
+    status: 'Estado',
+    estadoAV: 'Antivirus',
     marca: 'Marca',
     modelo: 'Modelo',
     procesador: 'Procesador',
@@ -82,9 +82,17 @@ function App() {
     "Gerencia de Administracion Y Finanzas"
   ];
 
+  const assetStatuses = [
+    "En Uso", "En Bodega", "De Baja", "En Reparación", "Reservado",
+    "En Tránsito", "Perdido / Robado", "Para Despiece"
+  ];
+
+  const avStatuses = ["Actualizado", "Desactualizado", "No Instalado", "Error"];
+
   const [form, setForm] = useState(initialFormState);
   const [busqueda, setBusqueda] = useState("");
   const [filtroTienda, setFiltroTienda] = useState("");
+  const [filtroSalud, setFiltroSalud] = useState(null);
   const [guardando, setGuardando] = useState(false);
   const [editId, setEditId] = useState(null);
   const [view, setView] = useState('dashboard');
@@ -102,6 +110,22 @@ function App() {
     fetchInventario();
   }, [fetchInventario]);
 
+  // Función para registrar movimientos en el historial
+  const registrarHistorial = (itemActual, itemNuevo) => {
+    const historial = itemActual.historial || [];
+    const fecha = new Date().toLocaleDateString('es-CL');
+    
+    // Detectar cambios clave
+    if (itemActual.nombre !== itemNuevo.nombre && itemNuevo.nombre) {
+      historial.push({ fecha, accion: 'Asignación', detalle: `Entregado a ${itemNuevo.nombre}` });
+    }
+    if (itemActual.status !== itemNuevo.status) {
+      historial.push({ fecha, accion: 'Cambio de Estado', detalle: `Cambió de ${itemActual.status} a ${itemNuevo.status}` });
+    }
+    
+    return historial;
+  };
+
   const agregarEquipo = async () => {
     if (guardando) return; // Evitar doble click
     if (!form.serie || !form.nombre) {
@@ -111,11 +135,21 @@ function App() {
     setGuardando(true);
     try {
       if (editId) {
-        await updateDoc(doc(db, "inventario", editId), form);
+        // Lógica de historial al editar
+        const itemOriginal = inventario.find(i => i.id === editId);
+        const nuevoHistorial = registrarHistorial(itemOriginal, form);
+        const formConHistorial = { ...form, historial: nuevoHistorial };
+
+        await updateDoc(doc(db, "inventario", editId), formConHistorial);
         alert("Equipo actualizado correctamente");
         setEditId(null);
       } else {
-        await addDoc(collection(db, "inventario"), form);
+        // Historial inicial
+        const formInicial = { 
+          ...form, 
+          historial: [{ fecha: new Date().toLocaleDateString('es-CL'), accion: 'Alta', detalle: 'Equipo ingresado al inventario' }] 
+        };
+        await addDoc(collection(db, "inventario"), formInicial);
         alert("Equipo registrado correctamente");
       }
 
@@ -142,6 +176,26 @@ function App() {
       console.error("Error al eliminar:", error);
       alert("Error al eliminar el equipo.");
     }
+  };
+
+  const devolverEquipo = () => {
+    if (!window.confirm("¿Confirmar devolución? Esto limpiará los datos del usuario y pasará el equipo a Bodega.")) return;
+    const nuevoHistorial = [...(form.historial || [])];
+    nuevoHistorial.push({
+      fecha: new Date().toLocaleDateString('es-CL'),
+      accion: 'Devolución',
+      detalle: `Recibido de ${form.nombre}. Pasado a Bodega.`
+    });
+
+    setForm({
+      ...form,
+      nombre: '',
+      area: '',
+      cargo: '',
+      correo: '',
+      status: 'En Bodega',
+      historial: nuevoHistorial
+    });
   };
 
   const generarActa = (item) => {
@@ -180,12 +234,41 @@ function App() {
     setView('dashboard');
   };
 
-  const filtrados = inventario.filter(item =>
-    (filtroTienda === "" || item.tiendaOficina === filtroTienda) &&
-    (Object.values(item).some(value =>
-      String(value).toLowerCase().includes(busqueda.toLowerCase())
-    ))
-  );
+  // Lógica de filtrado avanzada (Omnisearch + Filtros de Salud)
+  const filtrados = inventario.filter(item => {
+    const coincideTienda = filtroTienda === "" || item.tiendaOficina === filtroTienda;
+    
+    // Omnisearch: Busca en múltiples campos clave
+    const termino = busqueda.toLowerCase();
+    const coincideBusqueda = 
+      (item.serie || '').toLowerCase().includes(termino) ||
+      (item.nombre || '').toLowerCase().includes(termino) ||
+      (item.nombreUsuario || '').toLowerCase().includes(termino) ||
+      (item.macAddress || '').toLowerCase().includes(termino);
+
+    // Filtros de Salud
+    let coincideSalud = true;
+    if (filtroSalud === 'ram') {
+      // Lógica simple: si el string de RAM contiene "4GB" o "2GB" (ejemplo)
+      coincideSalud = (item.memoriaRAM || '').includes('4GB') || (item.memoriaRAM || '').includes('2GB');
+    } else if (filtroSalud === 'av') {
+      coincideSalud = item.estadoAV === 'Desactualizado' || item.estadoAV === 'Error';
+    } else if (filtroSalud === 'bodega') {
+      // Simulación: Equipos en bodega
+      coincideSalud = item.status === 'En Bodega';
+    }
+
+    return coincideTienda && coincideBusqueda && coincideSalud;
+  });
+
+  // Cálculos para el Dashboard
+  const stats = {
+    enUso: inventario.filter(i => i.status === 'En Uso').length,
+    enBodega: inventario.filter(i => i.status === 'En Bodega').length,
+    deBaja: inventario.filter(i => i.status === 'De Baja').length,
+    enReparacion: inventario.filter(i => i.status === 'En Reparación').length,
+    reservado: inventario.filter(i => i.status === 'Reservado').length,
+  };
 
   return (
     <div className="min-h-screen bg-gray-100 p-8 font-sans">
@@ -196,10 +279,10 @@ function App() {
         </div>
         <div className="mt-4 border-t border-blue-800 pt-4 flex space-x-2">
           <button onClick={() => setView('dashboard')} className={`px-4 py-2 rounded-lg font-semibold text-sm transition ${view === 'dashboard' ? 'bg-white text-blue-900' : 'bg-blue-800 text-white hover:bg-blue-700'}`}>
-            Dashboard
+            Ficha de Activo
           </button>
           <button onClick={() => setView('listado')} className={`px-4 py-2 rounded-lg font-semibold text-sm transition ${view === 'listado' ? 'bg-white text-blue-900' : 'bg-blue-800 text-white hover:bg-blue-700'}`}>
-            Listado Completo
+            Tablero de Control y Listado
           </button>
         </div>
       </header>
@@ -207,8 +290,22 @@ function App() {
       {view === 'dashboard' && (
         <main className="max-w-6xl mx-auto">
           <div className="bg-white p-8 rounded-2xl shadow-lg border border-gray-200">
-            <h2 className="text-xl font-bold mb-4 text-blue-900 border-b pb-2">{editId ? 'Modificar Equipo' : 'Registrar Nuevo Equipo'}</h2>
-            <div className="space-y-4">
+            <div className="flex justify-between items-center mb-6 border-b pb-3">
+              <h2 className="text-xl font-bold text-blue-900">{editId ? 'Modificar Tarjeta de Activo' : 'Alta de Nuevo Activo'}</h2>
+              {editId && (
+                <button onClick={devolverEquipo} className="bg-orange-100 text-orange-700 px-4 py-2 rounded-lg text-sm font-bold hover:bg-orange-200 transition">
+                  🔄 Cerrar Sesión / Devolver
+                </button>
+              )}
+            </div>
+            
+            <div className="space-y-8">
+              {/* SECCIÓN A: DATOS DEL USUARIO (RESPONSABILIDAD) */}
+              <div className="bg-blue-50 p-5 rounded-xl border border-blue-100">
+                <h3 className="text-sm font-bold text-blue-800 uppercase mb-4 flex items-center gap-2">
+                  👤 A. Datos del Usuario (Responsabilidad)
+                </h3>
+                <div className="space-y-4">
               <div className="relative"><span className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none"><svg className="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" /></svg></span><input placeholder="Nombre" value={form.nombre} onChange={e => setForm({...form, nombre: e.target.value})} className="w-full p-2 pl-10 bg-gray-50 border rounded-lg" /></div>
               <div className="grid grid-cols-2 gap-4">
                 <div className={`relative ${form.seccion !== 'Tiendas' ? 'col-span-2' : ''}`}><span className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none"><svg className="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M4 4a2 2 0 012-2h8a2 2 0 012 2v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z" clipRule="evenodd" /></svg></span>
